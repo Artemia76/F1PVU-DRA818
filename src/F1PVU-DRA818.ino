@@ -16,6 +16,7 @@
 #include <BoutonPin.h>
 #include <SchedTask.h>
 #include <SoftwareSerial.h>
+#include <DRA818.h>
 
 // Affectation des E/S
 #define codeurRotatifA_3  3   // CLK du codeur Rotatif
@@ -43,7 +44,7 @@ String vers = "V1.09";
 // définit le type d'écran lcd 16 x 2
 LiquidCrystal_I2C LCD(0x27,16,2);
 
-SoftwareSerial DRA818 (DRA818_RX, DRA818_TX);
+SoftwareSerial dra_serial (DRA818_RX, DRA818_TX);
 
 // Afectation des boutons poussoirs 
 // Pour la gestion anti rebond 
@@ -80,7 +81,7 @@ int adresse_rpt = adresse_pas + sizeof(Pas); // Mode Répéteur
 int adresse_rev = adresse_rpt + sizeof(mSHIFT); // Mode Reverse
 
 // paramètres réglés pour DRA818V
-
+DRA818* Dra;
 // Bande passante en kHz ( 0 = 12.5 or 1 = 25 )
 String bw = "0";
 
@@ -98,16 +99,16 @@ SchedTask RSSI_Timer (0, 400, RSSI);
 void RSSI ()
 {
   String RRSSI = "";
-  DRA818.println ("RSSI?"); //demande RSSI au module
-  DRA818.flush();
+  dra_serial.println ("RSSI?"); //demande RSSI au module
+  dra_serial.flush();
   delay(10);
-  while (DRA818.available() < 9)
+  while (dra_serial.available() < 9)
   {
     delay(10);
   }
-  while (DRA818.available() > 0)
+  while (dra_serial.available() > 0)
   {
-    char c = DRA818.read();
+    char c = dra_serial.read();
     RRSSI += c;
   }
   #ifdef DEBUG
@@ -141,21 +142,21 @@ void Envoi()
   buffer += String(squ);
   buffer += String(",");
   buffer += String(rx_ctcss);
-  DRA818.println(buffer);
-  DRA818.flush();
+  dra_serial.println(buffer);
+  dra_serial.flush();
   
 #ifdef DEBUG
   Serial.println(buffer);
 #endif
   buffer = "";
-  while (DRA818.available() < 9)
+  while (dra_serial.available() < 9)
   {
     delay(10);
   }
   // On attend le code retour du SA818
-  while (DRA818.available() > 0)
+  while (dra_serial.available() > 0)
   {
-    char c = DRA818.read();
+    char c = dra_serial.read();
     buffer += c;
   }
 #ifdef DEBUG
@@ -235,7 +236,7 @@ void setup()
   Serial.begin (9600);
   pinMode(DRA818_RX, INPUT);
   pinMode(DRA818_TX, OUTPUT);
-  DRA818.begin (9600);
+  dra_serial.begin (9600);
   
   // Affectation de la sortie pour activer le ton 1750 Hz
   pinMode(hzPTT, OUTPUT);
