@@ -10,7 +10,6 @@
 //  * Mémorisation dans l'eeprom des pas de fréquence, mode répéteur, mode reverse
 
 // Inclusion des dépendances
-#include <EEPROM.h>
 #include <Wire.h>
 #include "LiquidCrystal_I2C.h"
 #include <BoutonPin.h>
