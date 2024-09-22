@@ -116,8 +116,25 @@ void RSSI ()
   RRSSI = RRSSI.substring(5,8);
 
   RSSi =(RRSSI.toInt());
-  smetre = map(RSSi,36,224,0,135);
-  if (smetre < 0) smetre = 0;
+  //smetre = map(RSSi,36,224,0,135);
+                        
+  if ((RSSi >= 0) && (RSSi < 36)) smetre = 0; //S0     
+  else if ((RSSi > 36) && (RSSi < 41)) smetre = 7; //S1
+  else if ((RSSi > 41) && (RSSi < 48)) smetre = 15; //S2
+  else if ((RSSi > 48) && (RSSi < 54)) smetre = 23; //S3
+  else if ((RSSi > 54) && (RSSi < 57)) smetre = 35; //S4
+  else if ((RSSi > 57) && (RSSi < 61)) smetre = 50; //S5
+  else if ((RSSi > 61) && (RSSi < 67)) smetre = 60; //S6
+  else if ((RSSi > 67) && (RSSi < 72)) smetre = 70; //S7
+  else if ((RSSi > 72) && (RSSi < 81)) smetre = 80; //S8
+  else if ((RSSi > 81) && (RSSi < 92)) smetre = 95; //S9
+  else if ((RSSi > 92) && (RSSi < 98)) smetre = 110; //S9+10
+  else if ((RSSi > 98) && (RSSi < 109)) smetre = 125; //S9+20
+  else if ((RSSi > 110) && (RSSi < 224)) smetre = 135; //Au dela de S9+20
+  //if ((svrssi > 254) && (svrssi < 255))analogWrite(sRSSi, 140);
+  //Fin reglage RSSI Olivier
+  
+  //if (smetre < 0) smetre = 0;
   analogWrite(sRSSi, smetre);
 
   bDispChange = true;
@@ -218,11 +235,11 @@ void Config_REV ()
   if (mREV)                                     //Memorisation de D11
   {
     Decaltx = 0;                                   // force le decalage tx a 600 kHz
-    Decalrx = 600000;                                       // force le decalage rx a 0
+    Decalrx = -600000;                                       // force le decalage rx a 0
   }
   else
   {
-    Decaltx = 600000;                                        // force le decalage tx a 0
+    Decaltx = -600000;                                        // force le decalage tx a 0
     Decalrx = 0;                                  // force le decalage rx a -600 kHz
   }
   bDispChange = true;
